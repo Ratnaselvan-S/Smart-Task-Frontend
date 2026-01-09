@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import ProtectedContent from "../ProtectedContent/ProtectedContent";
+import { API_URL } from "../../utils/BackendApi";
 
 function AppLayout() {
   const [open, setOpen] = useState(false);
@@ -18,10 +19,17 @@ function AppLayout() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:5000/logout", {
+      const res = await fetch(`${API_URL}/logout`, {
         method: "POST",
         credentials: "include",
       });
+
+      if (!res.ok) {
+        console.error("Logout failed", await res.text());
+        return;
+      }
+
+      // Redirect to login page
       window.location.href = "/login";
     } catch (err) {
       console.error("Logout failed", err);
