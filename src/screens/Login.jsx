@@ -7,6 +7,8 @@ function Login() {
   const passwordRef = useRef(null);
 
   const [isLoading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
+
   const navigate = useNavigate();
 
   const [errors, setErrors] = useState({
@@ -40,6 +42,7 @@ function Login() {
     if (newErrors.email || newErrors.password) {
       return;
     }
+    setServerError("");
 
     try {
       setLoading(true);
@@ -54,7 +57,8 @@ function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        setServerError(data.message || "Login failed");
+        return;
       }
 
       console.log("Login success:", data);
@@ -136,6 +140,11 @@ function Login() {
               "Login"
             )}
           </button>
+          {serverError && (
+            <p className="text-sm text-red-600 text-center bg-red-50 border border-red-200 rounded-lg py-2">
+              {serverError}
+            </p>
+          )}
         </form>
 
         <div className="my-6 flex items-center">
