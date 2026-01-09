@@ -5,18 +5,14 @@ import Register from "./screens/Register";
 import Dashboard from "./screens/Dashboard";
 import Tasks from "./screens/Task";
 import AppLayout from "./components/layouts/AppLayout";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import PublicRoute from "./components/PublicRoutes/PublicRoute";
 import React from "react";
 import NotFound from "./screens/NotFound";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <ProtectedRoute>
-        <AppLayout />
-      </ProtectedRoute>
-    ),
+    element: <AppLayout />, // AppLayout always renders
     children: [
       { index: true, element: <Dashboard /> },
       { path: "dashboard", element: <Dashboard /> },

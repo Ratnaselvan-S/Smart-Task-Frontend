@@ -1,10 +1,13 @@
 import React, { useRef, useState } from "react";
+import { API_URL } from "../utils/BackendApi";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
   const [isLoading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({
     email: "",
@@ -41,11 +44,24 @@ function Login() {
     try {
       setLoading(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
 
-      console.log({ email, password });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      console.log("Login success:", data);
+
+      navigate("/dashboard", { replace: true });
     } catch (error) {
-      console.error("Login failed");
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -53,7 +69,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full  max-w-[90%] sm:max-w-md bg-white rounded-xl sm:rounded-2xl shadow-lg  p-4 sm:p-6 md:p-8">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-600">Welcome Back</h1>
           <p className="text-gray-500 mt-2">
@@ -129,7 +145,7 @@ function Login() {
         </div>
 
         <p className="text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
+          Don’t have an account?
           <a
             href="/register"
             className="text-blue-600 font-medium hover:underline"

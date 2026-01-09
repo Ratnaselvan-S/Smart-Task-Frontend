@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { API_URL } from "../utils/BackendApi";
 
 function Register() {
   const nameRef = useRef(null);
@@ -49,15 +50,33 @@ function Register() {
     try {
       setLoading(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      console.log({
-        name,
-        email,
-        password,
+      const res = await fetch(`${API_URL}/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // important for cookies (JWT)
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Signup failed");
+      }
+
+      // success
+      console.log("Signup success:", data);
+
+      // optional: redirect after signup
+      window.location.href = "/login";
     } catch (err) {
-      console.error("Registration failed");
+      console.error(err.message);
+      alert(err.message); // simple UX for now
     } finally {
       setLoading(false);
     }
@@ -65,7 +84,7 @@ function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+      <div className="w-full  max-w-[90%]   sm:max-w-md   bg-white    rounded-xl sm:rounded-2xl   shadow-lg  p-4 sm:p-6 md:p-8 ">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-600">Create Account</h1>
           <p className="text-gray-500 mt-2">

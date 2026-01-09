@@ -1,8 +1,7 @@
-// PublicRoute.jsx
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
-export default function PublicRoute({ children }) {
+export default function ProtectedContent({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -11,7 +10,7 @@ export default function PublicRoute({ children }) {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
           method: "GET",
-          credentials: "include", // important for HTTP-only cookies
+          credentials: "include", // HTTP-only cookie
         });
 
         if (res.status === 200) setIsAuthenticated(true);
@@ -22,12 +21,10 @@ export default function PublicRoute({ children }) {
         setIsLoading(false);
       }
     }
-
     checkAuth();
   }, []);
 
   if (isLoading) return <div>Loading...</div>;
 
-  // Redirect logged-in users to dashboard
-  return isAuthenticated ? <Navigate to="/dashboard" /> : children;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 }
